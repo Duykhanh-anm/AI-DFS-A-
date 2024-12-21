@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 100;
+vector<int> adj[N + 1], Path; 
+bool visited[N + 1];         
+int trace[N + 1];            
+int heuristic[N + 1]; 
+int n, m, S, T;              
+
+struct Node {
+    int id;
+    int cost;
+    int heuristic; 
+
+    bool operator>(const Node& other) const {
+        return (cost + heuristic) > (other.cost + other.heuristic);
+    }
+};
+
+void a_star_search(int start, int target) {
+    priority_queue<Node, vector<Node>, greater<Node>> pq; 
+    memset(visited, false, sizeof(visited));
+    memset(trace, -1, sizeof(trace));
+
+    pq.push({start, 0, heuristic[start]}); 
+    visited[start] = true;
+
+    while (!pq.empty()) {
+        Node current = pq.top();
+        pq.pop();
+
+
+        if (current.id == target) {
+            find_path(target);
+            return;
+        }
+
+
+        for (auto neighbor : adj[current.id]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                trace[neighbor] = current.id;
+                pq.push({neighbor, current.cost + 1, heuristic[neighbor]}); 
+            }
+        }
+    }
+
+    cout << "-1\n"; 
+}
+
+void find_path(int t) {
+    int x = t;
+    while (x != -1) {
+        Path.push_back(x); 
+        x = trace[x];      
+    }
+    reverse(Path.begin(), Path.end()); 
+    for (int v : Path) {
+        cout << v << " ";
+    }
+    cout << '\n';
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> n >> m >> S >> T;
+    
+    for (int i = 1; i <= n; i++) {
+        cin >> heuristic[i]; h
+    }
+
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u); 
+    }
+
+    a_star_search(S, T); 
+
+    return 0;
+}
